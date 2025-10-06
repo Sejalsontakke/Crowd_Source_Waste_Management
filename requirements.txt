@@ -1,0 +1,3 @@
+pip install -r requirements.txt
+
+This ensures they have both Streamlit and Pandas installed, allowing your application to run correctly.
