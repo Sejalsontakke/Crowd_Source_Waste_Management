@@ -1,5 +1,10 @@
-pip install -r requirements.txt
-
-model_creator.py
+streamlit
+pandas
+numpy
+scikit-learn
+matplotlib
+plotly
+tensorflow==2.16.1
+joblib
 
 This ensures they have both Streamlit and Pandas installed, allowing your application to run correctly.
