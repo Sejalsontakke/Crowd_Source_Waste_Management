@@ -7,4 +7,4 @@ plotly
 tensorflow==2.16.1
 joblib
 
-This ensures they have both Streamlit and Pandas installed, allowing your application to run correctly.
+
