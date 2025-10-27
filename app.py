@@ -1,5 +1,4 @@
 # --- STREAMLIT APP CODE (Must be run in a separate cell to create app.py) ---
-%%writefile app.py
 import streamlit as st
 from PIL import Image
 import pandas as pd
