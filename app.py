@@ -7,7 +7,15 @@ import time # For simulation of processing
 import io
 import os 
 
-# --- Configuration & Data Handling ---
+
+
+# Replace with your converted Drive URL
+url = "https://drive.google.com/uc?export=download&id=1iwE-RkqQF7621-nRcHijIVWuduila0xR"
+data = pd.read_csv(url)
+
+st.title("Crowd Source Waste Management System")
+st.write("Dataset Preview:")
+st.dataframe(data.head())
 
 # --- Google Drive Placeholder for External Dataset ---
 GOOGLE_DRIVE_DATASET_ID = "YOUR_CLASSIFICATION_DATA_ID_HERE"
