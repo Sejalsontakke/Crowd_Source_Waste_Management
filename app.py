@@ -1,21 +1,14 @@
 # --- STREAMLIT APP CODE (Must be run in a separate cell to create app.py) ---
+%%writefile app.py
 import streamlit as st
 from PIL import Image
 import pandas as pd
 import uuid # For unique report IDs
 import time # For simulation of processing
 import io
-import os 
+import os
 
-
-
-# Replace with your converted Drive URL
-url = "https://drive.google.com/uc?export=download&id=1iwE-RkqQF7621-nRcHijIVWuduila0xR"
-data = pd.read_csv(url)
-
-st.title("Crowd Source Waste Management System")
-st.write("Dataset Preview:")
-st.dataframe(data.head())
+# --- Configuration & Data Handling ---
 
 # --- Google Drive Placeholder for External Dataset ---
 GOOGLE_DRIVE_DATASET_ID = "YOUR_CLASSIFICATION_DATA_ID_HERE"
@@ -23,7 +16,7 @@ GOOGLE_DRIVE_DATASET_ID = "YOUR_CLASSIFICATION_DATA_ID_HERE"
 @st.cache_data
 def load_classification_data_from_drive(file_id):
     """Placeholder to load a dataset, e.g., for model mapping or instructions."""
-    st.sidebar.info(f"Using a *dummy classification map*. Implement Google Drive loading logic for ID: {file_id}")
+    st.sidebar.info(f"Using a **dummy classification map**. Implement Google Drive loading logic for ID: {file_id}")
 
     # Dummy Data for the ML Model mapping
     classification_map = {
@@ -70,23 +63,23 @@ if 'reports_df' not in st.session_state:
 
 def report_issue_form():
     """Handles the Report Issue form submission."""
-    st.header("Report a New Waste Issue 🗑")
+    st.header("Report a New Waste Issue 🗑️")
     with st.form(key='issue_report_form'):
-        
+
         # Image Uploader Input
         uploaded_file = st.file_uploader(
             "Upload Image of Waste (Highly Recommended)",
             type=["png", "jpg", "jpeg"],
             key="image_uploader"
         )
-        
+
         default_waste_type = 'General Trash'
-        
+
         if uploaded_file is not None:
             col1, col2 = st.columns([1, 2])
             with col1:
                  st.image(uploaded_file, caption='Image Preview', width=150)
-            
+
             # Simulate ML Prediction
             predicted_waste = st.radio(
                 "Simulated ML Prediction (Select the category):",
@@ -94,18 +87,18 @@ def report_issue_form():
                 index=0
             )
             default_waste_type = CLASSIFICATION_MAP.get(predicted_waste, 'Other')
-            
-        st.markdown("---") 
+
+        st.markdown("---")
 
         location = st.text_input("Location (e.g., street address, landmark):", key="loc_input")
-        
+
         waste_type = st.selectbox(
             "Type of Waste:",
             ['General Trash', 'Recyclables', 'Construction Debris', 'Hazardous', 'Other'],
             index=['General Trash', 'Recyclables', 'Construction Debris', 'Hazardous', 'Other'].index(default_waste_type),
             key="type_input"
         )
-        
+
         description = st.text_area("Detailed Description (What, How much, etc.):", key="desc_input")
         reported_by = st.text_input("Your Name/Contact (Optional):", key="contact_input")
 
@@ -113,9 +106,9 @@ def report_issue_form():
 
         if submitted:
             if not location or not description:
-                st.error("Please enter both a *Location* and a *Detailed Description*.")
+                st.error("Please enter both a **Location** and a **Detailed Description**.")
                 return None
-            
+
             # Save the image if uploaded
             image_filename = None
             if uploaded_file is not None:
@@ -141,7 +134,7 @@ def report_issue_form():
                 'Is_Valid': None,
                 'Predicted_Area': None,
                 'Priority': None,
-                'Image_Filename': image_filename 
+                'Image_Filename': image_filename
             }
         return None
 
@@ -150,7 +143,7 @@ def report_issue_form():
 def simulate_validation(report_data):
     """Simulates 'Predict Problem Areas' and 'Validate Report' steps."""
     st.toast("Predicting Problem Areas and Validating...")
-    time.sleep(1) 
+    time.sleep(1)
 
     location_valid = len(report_data['Location'].split()) >= 3
     description_detailed = len(report_data['Description']) > 30
@@ -174,7 +167,7 @@ def simulate_validation(report_data):
 def simulate_routing_and_prioritization(report_data):
     """Simulates 'AI Routing and Prioritization' and sets the initial resolution status."""
     st.toast("AI Routing and Prioritization...")
-    time.sleep(1) 
+    time.sleep(1)
 
     priority = "Medium"
     status = "Queued for Standard Pickup (72 hr target)"
@@ -185,7 +178,7 @@ def simulate_routing_and_prioritization(report_data):
     elif 'Urban Cleanup Sector A' in report_data['Predicted_Area']:
         priority = "High"
         status = "Assigned to Local Crew (24 hr target)"
-    
+
     if report_data['Image_Filename'] not in (None, 'Saving Failed') and priority == "Medium":
         priority = "Medium/High (Visual Verified)"
         status = "Assigned to Local Crew (48 hr target)"
@@ -194,14 +187,14 @@ def simulate_routing_and_prioritization(report_data):
     report_data['Priority'] = priority
     report_data['Status'] = status
 
-    st.success(f"Report Routed! *Priority: {priority}. Initial Status: **{status}*.")
-    st.markdown(f"*Predicted Area:* {report_data['Predicted_Area']}")
+    st.success(f"Report Routed! **Priority: {priority}**. Initial Status: **{status}**.")
+    st.markdown(f"**Predicted Area:** {report_data['Predicted_Area']}")
     return report_data
 
 # --- Main Application Layout ---
 
 st.set_page_config(page_title="Crowd-Sourced Waste Management", layout="wide")
-st.title("Crowd-Sourced Waste Management System ♻")
+st.title("Crowd-Sourced Waste Management System ♻️")
 st.markdown("---")
 
 tab1, tab2 = st.tabs(["Report New Issue", "View All Reports (Admin/Public Dashboard)"])
@@ -216,20 +209,20 @@ with tab1:
             processed_report = simulate_validation(new_report_data)
 
         if processed_report['Is_Valid']:
-            st.success("✅ *Report is Valid!* Proceeding to Routing.")
+            st.success("✅ **Report is Valid!** Proceeding to Routing.")
 
             with st.spinner('Running AI Routing and Prioritization...'):
                 final_report = simulate_routing_and_prioritization(processed_report)
 
             df_new_row = pd.DataFrame([final_report])
             st.session_state['reports_df'] = pd.concat([st.session_state['reports_df'], df_new_row], ignore_index=True)
-            save_reports(st.session_state['reports_df']) 
+            save_reports(st.session_state['reports_df'])
 
             st.balloons()
-            st.markdown(f"Report ID: {final_report['ID'][:8]} has been *successfully submitted and prioritized*.")
+            st.markdown(f"Report ID: `{final_report['ID'][:8]}` has been **successfully submitted and prioritized**.")
         else:
-            st.error("❌ *Report is Invalid/Vague.*")
-            st.warning("Please refine the *Location* and provide a *Detailed Description* (more than 30 characters) or *Upload an Image* to ensure better prioritization.")
+            st.error("❌ **Report is Invalid/Vague.**")
+            st.warning("Please refine the **Location** and provide a **Detailed Description** (more than 30 characters) or **Upload an Image** to ensure better prioritization.")
 
             df_new_row = pd.DataFrame([processed_report])
             st.session_state['reports_df'] = pd.concat([st.session_state['reports_df'], df_new_row], ignore_index=True)
@@ -260,27 +253,27 @@ with tab2:
             df_filtered[display_cols].sort_values(by='Timestamp', ascending=False),
             use_container_width=True
         )
-        
+
         st.markdown("---")
         st.subheader("Image Review")
-        
+
         reports_with_images = df_filtered[df_filtered['Image_Filename'].notna() & (df_filtered['Image_Filename'] != 'Saving Failed')]
-        
+
         if not reports_with_images.empty:
-            
+
             image_options = reports_with_images.apply(
                 lambda row: f"{row['ID'][:8]} - {row['Location']} ({row['Waste_Type']})", axis=1
             )
-            
+
             report_to_view = st.selectbox(
                 "Select a Report to View its Image:",
                 options=image_options
             )
-            
+
             selected_id_prefix = report_to_view.split(' - ')[0]
             selected_report = reports_with_images[reports_with_images['ID'].str.startswith(selected_id_prefix)].iloc[0]
             image_path = selected_report['Image_Filename']
-            
+
             if os.path.exists(image_path):
                 try:
                     img = Image.open(image_path)
@@ -292,7 +285,7 @@ with tab2:
                  st.warning(f"Image file not found on the server: {image_path}.")
         else:
             st.info("No reports with images found in the current filter.")
-        
+
         st.markdown("---")
         st.subheader("Admin Actions (Simulated)")
         unresolved_reports = df[df['Status'].str.contains('target|Dispatch')]
@@ -315,7 +308,6 @@ with tab2:
                 save_reports(st.session_state['reports_df'])
                 st.toast(f"Report {selected_id} marked as RESOLVED!")
                 time.sleep(1)
-                st.rerun() 
+                st.rerun()
         else:
             st.info("All submitted and valid reports are currently marked as Resolved or Invalid.")
-            
